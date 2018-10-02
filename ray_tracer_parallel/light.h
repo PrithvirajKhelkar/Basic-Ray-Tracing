@@ -5,7 +5,7 @@
 #include "vect.h"
 #include "color.h"
 
-class light : public source {
+class light {
   vect position;
   color color_val;
 
@@ -19,7 +19,7 @@ public:
       position = p;
       color_val = c;
   }
-
+__host__ __device__ ~light(){}
   // method functions
   __host__ __device__ vect getLightPosition() {return position;}
   __host__ __device__ color getLightColor() {return color_val;}

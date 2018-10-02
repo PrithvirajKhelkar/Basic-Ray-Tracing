@@ -12,36 +12,36 @@ public:
   vect(double, double, double);
 
   // method functions
-  double getVectX() {return x;}
-  double getVectY() {return y;}
-  double getVectZ() {return z;}
+  inline double getVectX() {return x;}
+  inline double getVectY() {return y;}
+  inline double getVectZ() {return z;}
 
-  double magnitude() {
+  inline double magnitude() {
     return sqrt((x*x) + (y*y) + (z*z));
   }
 
-  vect normalize() {
+  inline vect normalize() {
     double magnitude = sqrt((x*x) + (y*y) + (z*z));
     return vect(x/magnitude,y/magnitude,z/magnitude);
   }
 
-  vect negative() {
+  inline vect negative() {
     return vect(-x,-y,-z);
   }
 
-  double dotProduct(vect v){
+  inline double dotProduct(vect v){
     return x*v.getVectX() + y*v.getVectY() +z*v.getVectZ();
   }
 
-  vect crossProduct(vect v){
+  inline vect crossProduct(vect v){
     return vect(y*v.getVectZ() - z*v.getVectY(), z*v.getVectX() - x*v.getVectZ(), x*v.getVectY() - y*v.getVectX());
   }
 
-  vect vectAdd(vect v){
+  inline vect vectAdd(vect v){
     return vect(x+v.getVectX(), y+v.getVectY(), z+v.getVectZ());
   }
 
-  vect vectMul(double scalar){
+  inline vect vectMul(double scalar){
     return vect(x*scalar, y*scalar, z*scalar);
   }
 

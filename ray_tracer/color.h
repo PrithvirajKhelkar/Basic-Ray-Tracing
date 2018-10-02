@@ -10,37 +10,37 @@ public:
   color(double, double, double, double);
 
   // method functions
-  double getColorRed() {return red;}
-  double getColorGreen() {return green;}
-  double getColorBlue() {return blue;}
-  double getColorSpecial() {return special;}
+  inline double getColorRed() {return red;}
+  inline double getColorGreen() {return green;}
+  inline double getColorBlue() {return blue;}
+  inline double getColorSpecial() {return special;}
 
-  double setColorRed(double redValue) {red=redValue;}
-  double setColorGreen(double greenValue) {green=greenValue;}
-  double setColorBlue(double blueValue) {blue=blueValue;}
-  double setColorSpecial(double specialValue) {special=specialValue;}
+  inline double setColorRed(double redValue) {red=redValue;}
+  inline double setColorGreen(double greenValue) {green=greenValue;}
+  inline double setColorBlue(double blueValue) {blue=blueValue;}
+  inline double setColorSpecial(double specialValue) {special=specialValue;}
 
-  double brightness() {
+  inline double brightness() {
     return (red + green + blue)/3;
   }
 
-  color colorScalar(double scalar){
+  inline color colorScalar(double scalar){
     return color (red*scalar, green*scalar, blue*scalar, special);
   }
 
-  color colorAdd(color c) {
+  inline color colorAdd(color c) {
     return color (red+c.getColorRed(), green+c.getColorGreen(), blue+c.getColorBlue(),special);
   }
 
-  color colorMultiply(color c){
+  inline color colorMultiply(color c){
     return color (red*c.getColorRed(),green*c.getColorGreen(),blue*c.getColorBlue(),special);
   }
 
-  color colorAverage(color c){
+  inline color colorAverage(color c){
     return color ((red+c.getColorRed())/2,(green+c.getColorGreen())/2,(blue+c.getColorBlue())/2,special);
   }
 
-  color clip(){
+  inline color clip(){
     double allLight = red+blue+green;
     double excessLight = allLight - 3;
     if(excessLight > 0){

@@ -17,9 +17,10 @@ public:
     direction = d;
   }
 
+__host__ __device__ ~ray(){}
   // method functions
-  __host__ __device__ vect getRayOrigin() {return origin;}
-  __host__ __device__ vect getRayDirection() {return direction;}
+  __device__ vect getRayOrigin() {return origin;}
+  __device__ vect getRayDirection() {return direction;}
 
 };
 

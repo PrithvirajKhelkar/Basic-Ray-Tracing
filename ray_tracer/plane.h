@@ -17,15 +17,15 @@ public:
   plane(vect, double, color);
 
   // method functions
-  vect getPlaneNormal() {return normal;}
-  double getPlaneDistance() {return distance;}
-  color getColor() {return color_val;}
+  inline vect getPlaneNormal() {return normal;}
+  inline double getPlaneDistance() {return distance;}
+  inline color getColor() {return color_val;}
 
-  vect getNormalAt(vect point) {
+  inline vect getNormalAt(vect point) {
     return normal;
   }
 
-  double findIntersection(ray r) {
+  inline double findIntersection(ray r) {
     vect ray_direction = r.getRayDirection();
 
     double a = ray_direction.dotProduct(normal);

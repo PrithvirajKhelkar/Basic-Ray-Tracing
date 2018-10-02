@@ -15,8 +15,8 @@ public:
   light(vect, color);
 
   // method functions
-  vect getLightPosition() {return position;}
-  color getLightColor() {return color_val;}
+  inline vect getLightPosition() {return position;}
+  inline color getLightColor() {return color_val;}
 
 };
 

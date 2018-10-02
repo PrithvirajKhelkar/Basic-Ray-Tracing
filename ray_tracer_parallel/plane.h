@@ -22,17 +22,17 @@ public:
     distance = d;
     color_val = col;
   }
-
+  __host__ __device__ ~plane(){}
   // method functions
-   __host__ __device__ vect getPlaneNormal() {return normal;}
-   __host__ __device__ double getPlaneDistance() {return distance;}
-   __host__ __device__ color getColor() {return color_val;}
+   __device__  vect getPlaneNormal() {return normal;}
+   __device__ double getPlaneDistance() {return distance;}
+   __device__  color getColor() {return color_val;}
 
-   __host__ __device__ vect getNormalAt(vect point) {
+   __device__  vect getNormalAt(vect point) {
     return normal;
   }
 
-   __host__ __device__ double findIntersection(ray r) {
+  __device__  double findIntersection(ray r) {
     vect ray_direction = r.getRayDirection();
 
     double a = ray_direction.dotProduct(normal);

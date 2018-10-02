@@ -20,7 +20,7 @@ public:
       camRight = right;
       camDown = down;
   }
-
+  __host__ __device__ ~camera(){}
   // method functions
   __host__ __device__ vect getCameraPosition() {return camPos;}
   __host__ __device__ vect getCameraDirection() {return camDir;}

@@ -17,16 +17,16 @@ public:
   sphere(vect, double, color);
 
   // method functions
-  vect getSphereCenter() {return center;}
-  double getSphereRadius() {return radius;}
-  color getColor() {return color_val;}
+  inline vect getSphereCenter() {return center;}
+  inline double getSphereRadius() {return radius;}
+  inline color getColor() {return color_val;}
 
-  vect getNormalAt(vect point){
+  inline vect getNormalAt(vect point){
     vect normal = point.vectAdd(center.negative()).normalize();
     return normal;
   }
 
-  double findIntersection(ray r){
+  inline double findIntersection(ray r){
     vect ray_origin = r.getRayOrigin();
     double ray_origin_x = ray_origin.getVectX();
     double ray_origin_y = ray_origin.getVectY();

@@ -12,10 +12,10 @@ public:
   camera(vect, vect, vect, vect);
 
   // method functions
-  vect getCameraPosition() {return camPos;}
-  vect getCameraDirection() {return camDir;}
-  vect getCameraRight() {return camRight;}
-  vect getCameraDown() {return camDown;}
+  inline vect getCameraPosition() {return camPos;}
+  inline vect getCameraDirection() {return camDir;}
+  inline vect getCameraRight() {return camRight;}
+  inline vect getCameraDown() {return camDown;}
 
 };
 

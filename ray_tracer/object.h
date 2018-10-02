@@ -11,11 +11,11 @@ public:
   // method functions
   virtual color getColor() {return color (0,0,0,0);}
 
-  virtual double findIntersection(ray r){
+  inline virtual double findIntersection(ray r){
     return 0;
   }
 
-  virtual vect getNormalAt(vect point) {
+  inline virtual vect getNormalAt(vect point) {
     return vect(0,0,0);
   }
 };

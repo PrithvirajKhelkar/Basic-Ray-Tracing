@@ -19,6 +19,9 @@ public:
     z=k;
   }
 
+  __host__ __device__ ~vect(){}
+
+
   // method functions
   __host__ __device__ double getVectX() {return x;}
   __host__ __device__ double getVectY() {return y;}
@@ -46,6 +49,7 @@ public:
   }
 
   __host__ __device__ vect vectAdd(vect v){
+
     return vect(x+v.getVectX(), y+v.getVectY(), z+v.getVectZ());
   }
 

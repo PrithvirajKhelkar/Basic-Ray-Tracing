@@ -12,8 +12,8 @@ public:
   ray(vect, vect);
 
   // method functions
-  vect getRayOrigin() {return origin;}
-  vect getRayDirection() {return direction;}
+  inline vect getRayOrigin() {return origin;}
+  inline vect getRayDirection() {return direction;}
 
 };
 

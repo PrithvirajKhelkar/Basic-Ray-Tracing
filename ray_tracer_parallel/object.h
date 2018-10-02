@@ -9,13 +9,13 @@ class object {
 public:
   __host__ __device__ object(){}
   // method functions
-  inline __host__ __device__ virtual color getColor() {return color (0.5,0,0,0);}
+  inline __host__ __device__  color getColor() {return color (0.5,0,0,0);}
 
-  __host__ __device__ virtual double findIntersection(ray r){
+  __host__ __device__  double findIntersection(ray r){
     return 0;
   }
 
-  __host__ __device__ virtual vect getNormalAt(vect point) {
+  __host__ __device__  vect getNormalAt(vect point) {
     return vect(0,0,0);
   }
 };
