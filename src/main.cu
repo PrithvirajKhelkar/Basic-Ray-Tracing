@@ -16,8 +16,6 @@
 #include "camera.h"
 #include "color.h"
 #include "light.h"
-#include "source.h"
-#include "object.h"
 #include "sphere.h"
 #include "plane.h"
 #include <stdio.h>
