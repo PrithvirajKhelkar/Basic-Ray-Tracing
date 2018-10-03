@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <limits>
-//#include <chrono>
+#include <chrono>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -37,7 +37,7 @@
 
 
 using namespace std;
-//using namespace std::chrono;
+using namespace std::chrono;
 struct RGBType {
   double r;
   double g;
@@ -108,39 +108,11 @@ void saveBMP (const char *filename, int w, int h, int dpi, RGBType *data) {
   fclose(f);
 }
 
-inline __device__ int winningObjectIndex(double* object_intersections,int total_intersections){
-  // return the index of the winning intersections
-  int index_of_minimum_value;
-double object_intersection;
 
-    double max = 0;
-
-    for(int i = 0; i< total_intersections;i++){
-      object_intersection=object_intersections[i];
-      if (max<object_intersection){
-        max = object_intersection;
-      }
-    }
-
-    if(max>0){
-      for(int i=0;i<total_intersections;i++){
-        object_intersection=object_intersections[i];
-        if(object_intersection>0 && object_intersection<=max){
-          max=object_intersection;
-          index_of_minimum_value = i;
-        }
-      }
-      return index_of_minimum_value;
-    }else{
-      return -1;
-    }
-
-}
 
 __device__ color getColorAt(int type,vect intersection_position,vect intersecting_ray_direction,sphere *scene_spheres,int sphere_count,plane *scene_planes,int plane_count,int index_of_winning_sphere, int index_of_winning_plane,light *light_sources,int total_sources,double accuracy,double ambientLight,int count){
- color stack[5];
- int stack_index=0;
 
+                                        // stop here
  int object_type=type;
   color winning_object_color;
   vect winning_object_normal;
@@ -148,8 +120,9 @@ __device__ color getColorAt(int type,vect intersection_position,vect intersectin
   sphere winning_sphere;
   plane winning_plane;
     color final_color;
+    vect final_normal;
     count = 0;
-while(true){
+
     if(object_type==0){
       winning_sphere=scene_spheres[index_of_winning_sphere];
       winning_object_color = winning_sphere.getColor();
@@ -183,9 +156,8 @@ while(true){
 
 
     final_color = winning_object_color.colorScalar(ambientLight);
-
-    stack[stack_index]=final_color;
-    stack_index++;
+    // stack[stack_index]=final_color;
+    // stack_index++;
 
     if(count < 5 && winning_object_color.getColorSpecial() > 0 && winning_object_color.getColorSpecial() <= 1){
       // reflection from objects with specular intensity
@@ -234,98 +206,100 @@ while(true){
       if(index_of_winning_sphere_with_reflection != -1 && index_of_winning_plane_with_reflection == -1){
         if(winning_sphere_value > accuracy) {
 
-          intersection_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_sphere_value));
+          vect reflection_intersection_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_sphere_value));
 
 
-        //  color reflection_intersection_color = getColorAt(0,reflection_intersections_position, reflection_intersections_ray_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
+            color reflection_intersection_color = getColorAt(0,reflection_intersection_position, reflection_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
 
-          object_type=0;
+        //  object_type=0;
 
 
-          index_of_winning_sphere=index_of_winning_sphere_with_reflection;
-          index_of_winning_plane=index_of_winning_plane_with_reflection;
-          stack[stack_index]=final_color;
-          stack_index++;count++;
-          continue;
-        //  final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
+          // index_of_winning_sphere=index_of_winning_sphere_with_reflection;
+          // index_of_winning_plane=index_of_winning_plane_with_reflection;
+          // stack_index++;
+          // stack[stack_index]=final_color;
+          // vect_stack[stack_index]=final_normal;
+          // count++;
+          // continue;
+         final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
 
         }
       }else if(index_of_winning_sphere_with_reflection == -1 && index_of_winning_plane_with_reflection != -1){
         if(winning_plane_value > accuracy) {
 
-        intersection_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_plane_value));
+        vect reflection_intersection_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_plane_value));
 
 
-          //color reflection_intersection_color = getColorAt(1,reflection_intersections_position, reflection_intersections_ray_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
+          color reflection_intersection_color = getColorAt(1,reflection_intersection_position, reflection_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
 
-          object_type=1;
+          // object_type=1;
+          //
+          //
+          // index_of_winning_sphere=index_of_winning_sphere_with_reflection;
+          // index_of_winning_plane=index_of_winning_plane_with_reflection;
+          // stack_index++;
+          // stack[stack_index]=final_color;
+          // vect_stack[stack_index]=final_normal;
+          // count++;
+          // continue;
 
-
-          index_of_winning_sphere=index_of_winning_sphere_with_reflection;
-          index_of_winning_plane=index_of_winning_plane_with_reflection;
-          stack[stack_index]=final_color;
-          stack_index++;count++;
-          continue;
-
-          //final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
+          final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
 
         }
       }else if(index_of_winning_sphere_with_reflection != -1 && index_of_winning_plane_with_reflection != -1){
         if(winning_sphere_value < winning_plane_value){
           if(winning_sphere_value > accuracy) {
 
-            intersection_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_sphere_value));
+          vect   reflection_intersections_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_sphere_value));
 
 
-//            color reflection_intersection_color = getColorAt(0,reflection_intersections_position, reflection_intersections_ray_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
+            color reflection_intersection_color = getColorAt(0,reflection_intersections_position, reflection_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
 
             object_type=0;
 
 
-            index_of_winning_sphere=index_of_winning_sphere_with_reflection;
-            index_of_winning_plane=index_of_winning_plane_with_reflection;
-            stack[stack_index]=final_color;
-            stack_index++;count++;
-            continue;
+            // index_of_winning_sphere=index_of_winning_sphere_with_reflection;
+            // index_of_winning_plane=index_of_winning_plane_with_reflection;
+            // stack_index++;
+            // stack[stack_index]=final_color;
+            // vect_stack[stack_index]=final_normal;
+            // count++;
+            // continue;
 
-  //          final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
+            final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
 
           }
         }else{
           if(winning_plane_value > accuracy) {
 
-          intersection_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_plane_value));
+        vect   reflection_intersections_position = intersection_position.vectAdd(reflection_direction.vectMul(winning_plane_value));
 
-          //  color reflection_intersection_color = getColorAt(1,reflection_intersections_position, reflection_intersections_ray_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
+            color reflection_intersection_color = getColorAt(1,reflection_intersections_position, reflection_direction, scene_spheres,sphere_count,scene_planes,plane_count, index_of_winning_sphere_with_reflection,index_of_winning_plane_with_reflection, light_sources,total_sources, accuracy, ambientLight, count++);
 
-          object_type=1;
+          // object_type=1;
+          //
+          //
+          // index_of_winning_sphere=index_of_winning_sphere_with_reflection;
+          // index_of_winning_plane=index_of_winning_plane_with_reflection;
+          // stack_index++;
+          // stack[stack_index]=winning_object_color;
+          // vect_stack[stack_index]=final_normal;
+          // count++;
+          // continue;
 
-
-          index_of_winning_sphere=index_of_winning_sphere_with_reflection;
-          index_of_winning_plane=index_of_winning_plane_with_reflection;
-          stack[stack_index]=winning_object_color;
-          stack_index++;count++;
-          continue;
-
-          //  final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
+            final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
 
           }
       }
     }
-  }else{break;}
-  break;
-}
+  }
 
 
   light light_source;
-  stack_index--;
-  color top_of_stack;
-  while(stack_index>=0){
 
 
 
-    // final_color = final_color.colorAdd(top_of_stack.colorScalar(ambientLight).colorScalar(top_of_stack.getColorSpecial()));
-    // stack_index--;
+
 
     for(int light_index = 0; light_index < total_sources;light_index++) {
       light_source=light_sources[light_index];
@@ -362,8 +336,9 @@ while(true){
           if(temp_dist > accuracy && temp_dist >0 && temp_dist <=distance_to_light_magnitude)
             shadowed=true;
         }
-        shadowed = false;
+
         if(shadowed == false){
+
           final_color = final_color.colorAdd(winning_object_color.colorMultiply(light_source.getLightColor()).colorScalar(cosine_angle));
 
           if(winning_object_color.getColorSpecial() > 0 && winning_object_color.getColorSpecial() <=1 ){
@@ -384,24 +359,24 @@ while(true){
         }
       }
     }                                        //TODO fix the lighting loop
-    top_of_stack=stack[stack_index];
-    top_of_stack.colorAdd(final_color.colorScalar(top_of_stack.getColorSpecial()));
-    final_color=top_of_stack.clip();
+
+
   //  final_color = final_color.colorAdd(top_of_stack.colorScalar(ambientLight).colorScalar(top_of_stack.getColorSpecial()));
-    stack_index--;
-}
+
+
+
 
 
   //printf("%f %f %f \n",final.getColorRed(),final.getColorGreen(),final.getColorBlue());
 
-  return final_color;
+  return final_color.clip();
 }
 
 __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,int width,int height,double aspectRatio,double accuracy,double ambientLight,int total_objects,sphere *scene_spheres,int sphere_count,plane *scene_planes,int plane_count,light *light_sources,int total_sources, camera scene_cam){
 
   // x=thisone%width;
   // y=lroundf(thisone/width);
-  int aa_index;
+
   double xamnt,yamnt;
 
   //  int x,y;
@@ -413,16 +388,16 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
 
   // start with a black pixel
   int aadepth2=aadepth*aadepth;
-  double tempRed[1];//=new double[1];
-  double tempGreen[1];//=new double[1];
-  double tempBlue[1];//=new double[1];
+  double tempRed=0;//=new double[1];
+  double tempGreen=0;//=new double[1];
+  double tempBlue=0;//=new double[1];
 
 
 
   for(int aax = 0; aax<aadepth;aax++){
     for(int aay = 0; aay<aadepth;aay++){
 
-      aa_index = aay*aadepth + aax;
+
 
 
 
@@ -510,9 +485,9 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
 
       if(index_of_winning_sphere==-1 && index_of_winning_plane==-1){
 
-        tempRed[aa_index] = 0;
-        tempGreen[aa_index] = 0;
-        tempBlue[aa_index] = 0;
+        tempRed+= 0;
+        tempGreen+= 0;
+        tempBlue+= 0;
 
       }else if( index_of_winning_sphere!=-1 && index_of_winning_plane==-1){
 
@@ -528,9 +503,9 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
           //color intersection_color=temp_sphere.getColor();
 
 
-          tempRed[aa_index] = intersection_color.getColorRed();
-          tempGreen[aa_index] = intersection_color.getColorGreen();
-          tempBlue[aa_index] = intersection_color.getColorBlue();
+          tempRed+= intersection_color.getColorRed();
+          tempGreen+= intersection_color.getColorGreen();
+          tempBlue+= intersection_color.getColorBlue();
         }
       }else if(index_of_winning_sphere==-1 && index_of_winning_plane!=-1){
 
@@ -546,9 +521,9 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
         //  color intersection_color=temp_plane.getColor();
             //printf("%f %f %f\n",temp.getColor().getColorRed(),temp.getColor().getColorGreen(),temp.getColor().getColorBlue());
 
-          tempRed[aa_index] = intersection_color.getColorRed();
-          tempGreen[aa_index] = intersection_color.getColorGreen();
-          tempBlue[aa_index] = intersection_color.getColorBlue();
+          tempRed+= intersection_color.getColorRed();
+          tempGreen+= intersection_color.getColorGreen();
+          tempBlue+= intersection_color.getColorBlue();
         }
       }else if(index_of_winning_sphere!=-1 && index_of_winning_plane!=-1){
 
@@ -565,9 +540,9 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
             //  color intersection_color=temp_sphere.getColor();
 
 
-              tempRed[aa_index] = intersection_color.getColorRed();
-              tempGreen[aa_index] = intersection_color.getColorGreen();
-              tempBlue[aa_index] = intersection_color.getColorBlue();
+              tempRed+= intersection_color.getColorRed();
+              tempGreen+= intersection_color.getColorGreen();
+              tempBlue+= intersection_color.getColorBlue();
             }
 
           }else{
@@ -583,9 +558,9 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
                 //color intersection_color=temp_plane.getColor();
 
 
-                tempRed[aa_index] = intersection_color.getColorRed();
-                tempGreen[aa_index] = intersection_color.getColorGreen();
-                tempBlue[aa_index] = intersection_color.getColorBlue();
+                tempRed+= intersection_color.getColorRed();
+                tempGreen+= intersection_color.getColorGreen();
+                tempBlue+= intersection_color.getColorBlue();
 
               }
           }
@@ -594,21 +569,10 @@ __device__ color computeColor(int N,int x,int y,int aadepth,double aathreshold,i
 
   }
 
-  //average the pixel color
-  double totalRed = 0;
-  double totalGreen = 0;
-  double totalBlue = 0;
 
-  for(int iColor = 0; iColor< aadepth2;iColor++){
-    double r=tempRed[iColor];double g=tempGreen[iColor];double b=tempBlue[iColor];
-
-    totalRed = totalRed + r;
-    totalGreen = totalGreen + g;
-    totalBlue = totalBlue + b;
-  }
-  double avgRed = totalRed/(aadepth2);
-  double avgGreen = totalGreen/(aadepth2);
-  double avgBlue = totalBlue/(aadepth2);
+  double avgRed = tempRed/(aadepth2);
+  double avgGreen = tempGreen/(aadepth2);
+  double avgBlue = tempBlue/(aadepth2);
   //
   // pixels[thisone].r =avgRed;
   // pixels[thisone].g =avgGreen;
@@ -729,11 +693,11 @@ int main(){
   int dpi = 72;
   int width=640;
   int height=480;
-  int n = width*height;
+
 // = new RGBType[n];
   //cudaMallocManaged(&pixels, n*sizeof(RGBType));
   //double *h_r,*h_g,*h_b,*d_r,*d_g,*d_b;
-  int aadepth = 1;
+  int aadepth = 3;
   double aathreshold = 0.1;
   double aspectRatio = (double) width/ (double) height;
   double ambientLight = 0.2;
@@ -774,7 +738,6 @@ int main(){
     cout<<"scene creation failed spectacularly";
      return 0;}
 
-    int num_bytes = n*sizeof(width*height*sizeof(RGBType));
     RGBType* h_pixels = (RGBType*)malloc(width*height*sizeof(RGBType));
     RGBType* d_pixels;
     // h_r = (double*)malloc(num_bytes);
@@ -800,17 +763,17 @@ int main(){
   dim3 threadsPerBlock(16,16);
   dim3 numBlocks(ceil(width/threadsPerBlock.x) +1,ceil(height/threadsPerBlock.y) +1);
 
-//  auto start=high_resolution_clock::now();
+  auto start=high_resolution_clock::now();
   render<<<numBlocks, threadsPerBlock>>>(d_pixels,N,aadepth,aathreshold,width,height,aspectRatio,accuracy,ambientLight,total_objects,scene_spheres,sphere_count,scene_planes,plane_count,light_sources,total_sources,scene_cam);
   cudaError_t err = cudaGetLastError();
   if (err != cudaSuccess)
     printf("Error: %s\n", cudaGetErrorString(err));
   else cout<<"kernel worked"<<endl;
   cudaDeviceSynchronize();
-  // auto stop=high_resolution_clock::now();
-  //
-  // auto duration=duration_cast<microseconds>(stop-start);
-  // cout<<duration.count()<<" microseconds"<<endl;
+  auto stop=high_resolution_clock::now();
+
+  auto duration=duration_cast<microseconds>(stop-start);
+  cout<<duration.count()<<" microseconds"<<endl;
 
   cudaError_t s = cudaMemcpy(h_pixels,d_pixels,width*height*sizeof(RGBType),cudaMemcpyDeviceToHost);
   if(s!= cudaSuccess) printf("Error: %s\n",cudaGetErrorString(s));
